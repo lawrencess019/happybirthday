@@ -6,7 +6,7 @@
     <title>Happy Birthday!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
             margin: 0;
             height: 100vh;
@@ -15,27 +15,34 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
         }
 
+        /* Styled Play Button */
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
             color: white;
+            background: linear-gradient(135deg, #ff512f, #dd2476);
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 8px;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background: linear-gradient(135deg, #dd2476, #ff512f);
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
+        /* Modal (Glassmorphism Effect) */
         .modal {
             display: none;
             position: fixed;
@@ -44,18 +51,21 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.3);
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
             position: relative;
             z-index: 2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .modal-content video {
@@ -70,8 +80,15 @@
             right: 15px;
             font-size: 24px;
             cursor: pointer;
+            color: white;
+            transition: 0.3s;
         }
 
+        .close:hover {
+            color: #ff512f;
+        }
+
+        /* Confetti Canvas */
         #confettiCanvas {
             position: fixed;
             top: 0;
@@ -81,13 +98,13 @@
             pointer-events: none;
             z-index: 3;
             opacity: 1;
-            transition: opacity 1s ease-out;
+            transition: opacity 2s ease-out;
         }
     </style>
 </head>
 <body>
 
-    <button id="openVideoBtn">Click Me :)</button>
+    <button id="openVideoBtn">Play Video</button>
 
     <canvas id="confettiCanvas"></canvas>
 
@@ -122,7 +139,7 @@
             }
 
             function createConfetti() {
-                for (let i = 0; i < 15; i++) { // Reduced particle count
+                for (let i = 0; i < 15; i++) {
                     confettiParticles.push({
                         x: Math.random() * canvas.width,
                         y: Math.random() * canvas.height - canvas.height,
@@ -147,7 +164,6 @@
                         confettiParticles.splice(index, 1);
                     }
                 });
-
                 if (isConfettiRunning) {
                     animationFrame = requestAnimationFrame(drawConfetti);
                 }
@@ -162,14 +178,14 @@
 
                 confettiInterval = setInterval(() => {
                     createConfetti();
-                }, 1500); // Reduced frequency
+                }, 1500);
             }
 
             function stopConfetti() {
                 clearInterval(confettiInterval);
                 isConfettiRunning = false;
                 cancelAnimationFrame(animationFrame);
-                canvas.style.opacity = "0";
+                canvas.style.opacity = "0"; // Smooth fade-out effect
             }
 
             openBtn.addEventListener("click", function () {
@@ -186,6 +202,8 @@
                 stopConfetti();
             });
 
+            video.addEventListener("ended", stopConfetti); // Stop confetti only when video ends
+
             window.addEventListener("click", function (event) {
                 if (event.target === modal) {
                     modal.style.display = "none";
@@ -194,9 +212,6 @@
                     stopConfetti();
                 }
             });
-
-            video.addEventListener("pause", stopConfetti);
-            video.addEventListener("play", startConfetti);
 
             window.addEventListener("resize", resizeCanvas);
         });
